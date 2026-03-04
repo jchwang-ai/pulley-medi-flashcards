@@ -73,7 +73,7 @@ export default function App() {
   const unknownTerms = terms.filter(t => !progress.knownTermIds.includes(t.id));
   
   const displayTerms = viewMode === 'review' 
-    ? favoriteTerms
+    ? (reviewFilter === 'unknown' ? unknownTerms : favoriteTerms)
     : (filteredWeek !== null ? terms.filter(t => t.week === filteredWeek) : terms);
   
   const currentDisplayTerm = displayTerms.length > 0 
@@ -245,6 +245,32 @@ export default function App() {
 
                 <div className="flex items-center gap-4">
                   {viewMode === 'review' && (
+                    <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                      <button 
+                        onClick={() => {
+                          setReviewFilter('unknown');
+                          setCurrentIndex(0);
+                        }}
+                        className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
+                          reviewFilter === 'unknown' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                        }`}
+                      >
+                        미암기 단어
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setReviewFilter('favorites');
+                          setCurrentIndex(0);
+                        }}
+                        className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
+                          reviewFilter === 'favorites' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                        }`}
+                      >
+                        즐겨찾기
+                      </button>
+                    </div>
+                  )}
+                  {viewMode === 'review' && (
                     <button 
                       onClick={() => setIsCreatingNote(true)}
                       className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
@@ -366,7 +392,7 @@ export default function App() {
                 {/* Term List Sidebar - Only in Review Mode or Study Mode */}
                 <div className={`w-full lg:w-80 shrink-0 ${showList ? 'block' : 'hidden lg:block'}`}>
                   <TermList 
-                    terms={viewMode === 'review' && reviewFilter === 'favorites' ? favoriteTerms : (filteredWeek !== null ? terms.filter(t => t.week === filteredWeek) : terms)} 
+                    terms={displayTerms} 
                     currentIndex={currentIndex % displayTerms.length}
                     onSelect={(idx) => {
                       setCurrentIndex(idx);
@@ -376,7 +402,7 @@ export default function App() {
                     onToggleFavorite={toggleFavorite}
                   />
                   <p className="mt-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center">
-                    {viewMode === 'review' && reviewFilter === 'favorites' ? '나만의 단어장 목록' : '현재 학습 목록'}
+                    {viewMode === 'review' ? (reviewFilter === 'favorites' ? '나만의 단어장 목록' : '미암기 단어 목록') : '현재 학습 목록'}
                   </p>
                 </div>
               </div>
