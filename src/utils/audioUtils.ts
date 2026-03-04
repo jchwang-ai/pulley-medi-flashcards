@@ -1,6 +1,6 @@
 
 /**
- * Adds a WAV header to raw PCM data and returns a data URL.
+ * Adds a WAV header to raw PCM data and returns a Blob URL.
  * Gemini TTS returns 16-bit linear PCM, mono, 24000Hz.
  */
 export function pcmToWav(base64Pcm: string, sampleRate: number = 24000): string {
@@ -40,14 +40,8 @@ export function pcmToWav(base64Pcm: string, sampleRate: number = 24000): string 
     view.setUint8(44 + i, pcmData.charCodeAt(i));
   }
 
-  // Convert buffer to base64
-  const binary = new Uint8Array(buffer);
-  let binaryString = '';
-  for (let i = 0; i < binary.length; i++) {
-    binaryString += String.fromCharCode(binary[i]);
-  }
-  const base64 = btoa(binaryString);
-  return `data:audio/wav;base64,${base64}`;
+  const blob = new Blob([buffer], { type: 'audio/wav' });
+  return URL.createObjectURL(blob);
 }
 
 function writeString(view: DataView, offset: number, string: string) {

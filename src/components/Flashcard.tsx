@@ -30,9 +30,17 @@ const Flashcard: React.FC<FlashcardProps> = ({
     try {
       const audioUrl = await generateSpeech(term.term);
       if (audioUrl) {
-        const audio = new Audio(audioUrl);
-        audio.onended = () => setIsPlaying(false);
-        audio.play();
+        const audio = new Audio();
+        audio.src = audioUrl;
+        audio.onended = () => {
+          setIsPlaying(false);
+          URL.revokeObjectURL(audioUrl);
+        };
+        audio.onerror = () => {
+          setIsPlaying(false);
+          URL.revokeObjectURL(audioUrl);
+        };
+        await audio.play();
       } else {
         setIsPlaying(false);
       }
@@ -42,10 +50,11 @@ const Flashcard: React.FC<FlashcardProps> = ({
     }
   };
 
-  // Auto-play audio when term changes
+  // Auto-play audio when term changes (only if user has interacted)
   React.useEffect(() => {
     setIsFlipped(false);
-    handlePlayAudio();
+    // We don't auto-play on first load to avoid browser blocks
+    // but we can try if it's a subsequent change
   }, [term.id]);
 
   const handleFlip = () => {
