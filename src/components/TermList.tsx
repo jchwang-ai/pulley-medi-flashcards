@@ -61,10 +61,18 @@ const TermList: React.FC<TermListProps> = ({ terms, onSelect, currentIndex, favo
             const isFavorite = favoriteTermIds.includes(term.id);
             
             return (
-              <button
+              <div
                 key={term.id}
                 onClick={() => originalIndex !== -1 && onSelect(originalIndex)}
-                className={`w-full text-left p-4 flex items-center gap-4 transition-all hover:bg-primary/5 group ${
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    originalIndex !== -1 && onSelect(originalIndex);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                className={`w-full text-left p-4 flex items-center gap-4 transition-all hover:bg-primary/5 group cursor-pointer outline-none focus-visible:bg-primary/5 ${
                   isActive ? 'bg-primary/5 border-l-4 border-primary' : 'border-l-4 border-transparent'
                 }`}
               >
@@ -103,7 +111,7 @@ const TermList: React.FC<TermListProps> = ({ terms, onSelect, currentIndex, favo
                     }`} 
                   />
                 </div>
-              </button>
+              </div>
             );
           })
         ) : (
