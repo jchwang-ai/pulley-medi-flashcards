@@ -362,14 +362,14 @@ export default function App() {
                     <div className="flex items-center gap-8 sm:gap-0 sm:contents order-2 sm:order-1">
                       <button 
                         onClick={handlePrev}
-                        className="sm:absolute sm:left-0 md:left-[-80px] p-3 sm:p-4 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-primary hover:border-primary/20 hover:bg-primary/5 shadow-sm transition-all active:scale-95"
+                        className="sm:absolute sm:left-[-20px] md:left-[-40px] p-3 sm:p-4 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-primary hover:border-primary/20 hover:bg-primary/5 shadow-sm transition-all active:scale-95 z-10"
                       >
                         <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
                       </button>
                       
                       <button 
                         onClick={handleNext}
-                        className="sm:absolute sm:right-0 md:right-[-80px] p-3 sm:p-4 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-primary hover:border-primary/20 hover:bg-primary/5 shadow-sm transition-all active:scale-95"
+                        className="sm:absolute sm:right-[-20px] md:right-[-40px] p-3 sm:p-4 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-primary hover:border-primary/20 hover:bg-primary/5 shadow-sm transition-all active:scale-95 z-10"
                       >
                         <ChevronRight size={20} className="sm:w-6 sm:h-6" />
                       </button>
@@ -394,8 +394,17 @@ export default function App() {
                   <TermList 
                     terms={displayTerms} 
                     currentIndex={currentIndex % displayTerms.length}
-                    onSelect={(idx) => {
-                      setCurrentIndex(idx);
+                    onSelect={(id) => {
+                      const displayIdx = displayTerms.findIndex(t => t.id === id);
+                      if (displayIdx !== -1) {
+                        setCurrentIndex(displayIdx);
+                      } else {
+                        // If not in current displayTerms, reset filters to show all terms
+                        const allIdx = terms.findIndex(t => t.id === id);
+                        setFilteredWeek(null);
+                        setViewMode('study');
+                        setCurrentIndex(allIdx);
+                      }
                       if (window.innerWidth < 1024) setShowList(false);
                     }}
                     favoriteTermIds={progress.favoriteTermIds}

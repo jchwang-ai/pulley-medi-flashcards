@@ -4,7 +4,7 @@ import { MedicalTerm, initialTerms } from '../data/terms';
 
 interface TermListProps {
   terms: MedicalTerm[];
-  onSelect: (index: number) => void;
+  onSelect: (id: string) => void;
   currentIndex: number;
   favoriteTermIds: string[];
   onToggleFavorite: (id: string) => void;
@@ -63,11 +63,11 @@ const TermList: React.FC<TermListProps> = ({ terms, onSelect, currentIndex, favo
             return (
               <div
                 key={term.id}
-                onClick={() => originalIndex !== -1 && onSelect(originalIndex)}
+                onClick={() => onSelect(term.id)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    originalIndex !== -1 && onSelect(originalIndex);
+                    onSelect(term.id);
                   }
                 }}
                 role="button"

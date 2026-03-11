@@ -184,9 +184,9 @@ const Flashcard: React.FC<FlashcardProps> = ({
             </AnimatePresence>
           </div>
 
-          <div className="absolute bottom-3 left-0 right-0 flex justify-center">
-            <div className="flex items-center gap-1 text-[8px] text-slate-300 font-medium uppercase tracking-tighter">
-              <Info size={10} />
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+            <div className="flex items-center gap-2 text-sm sm:text-base text-slate-600 font-bold uppercase tracking-widest">
+              <Info size={16} className="text-primary" />
               클릭해서 뒤집어보세요
             </div>
           </div>
