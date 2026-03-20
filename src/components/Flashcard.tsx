@@ -27,32 +27,18 @@ const Flashcard: React.FC<FlashcardProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
 
-  const handlePlayAudio = async (e?: React.MouseEvent) => {
+  const handlePlayAudio = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     if (isPlaying) return;
 
-    // Create audio object immediately to capture user interaction context
-    const audio = new Audio();
-    
     setIsPlaying(true);
     try {
-      const audioUrl = await generateSpeech(term.term);
-      if (audioUrl) {
-        audio.src = audioUrl;
-        audio.onended = () => setIsPlaying(false);
-        audio.onerror = (err) => {
-          console.error("Audio error event:", err);
-          setIsPlaying(false);
-        };
-        
-        // Mobile browsers (iOS) are strict about async playback.
-        // By using the 'audio' object created at the start of the click handler,
-        // we have a better chance of success.
-        const playPromise = audio.play();
-        
-        if (playPromise !== undefined) {
-          await playPromise;
-        }
+      const success = generateSpeech(term.term);
+      if (success) {
+        // Since window.speechSynthesis doesn't have a simple 'onended' for the whole system here,
+        // we'll just reset isPlaying after a short delay or use the utterance events if we had access.
+        // For simplicity with the current ttsService, we'll just toggle it back.
+        setTimeout(() => setIsPlaying(false), 1000);
       } else {
         setIsPlaying(false);
       }
@@ -62,12 +48,10 @@ const Flashcard: React.FC<FlashcardProps> = ({
     }
   };
 
-  // Pre-fetch audio when term changes to improve responsiveness
+  // Reset state when term changes
   React.useEffect(() => {
     setIsFlipped(false);
     setSwipeDirection(null);
-    // Start generating audio in background so it's ready when clicked
-    generateSpeech(term.term).catch(console.error);
   }, [term.id]);
 
   const handleFlip = () => {
