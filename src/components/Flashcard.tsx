@@ -31,15 +31,28 @@ const Flashcard: React.FC<FlashcardProps> = ({
     e?.stopPropagation();
     if (isPlaying) return;
 
+    // Create audio object immediately to capture user interaction context
+    const audio = new Audio();
+    
     setIsPlaying(true);
     try {
       const audioUrl = await generateSpeech(term.term);
       if (audioUrl) {
-        const audio = new Audio();
         audio.src = audioUrl;
         audio.onended = () => setIsPlaying(false);
-        audio.onerror = () => setIsPlaying(false);
-        await audio.play();
+        audio.onerror = (err) => {
+          console.error("Audio error event:", err);
+          setIsPlaying(false);
+        };
+        
+        // Mobile browsers (iOS) are strict about async playback.
+        // By using the 'audio' object created at the start of the click handler,
+        // we have a better chance of success.
+        const playPromise = audio.play();
+        
+        if (playPromise !== undefined) {
+          await playPromise;
+        }
       } else {
         setIsPlaying(false);
       }

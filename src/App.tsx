@@ -21,6 +21,11 @@ import Dashboard from './components/Dashboard';
 import ReviewNoteModal from './components/ReviewNoteModal';
 import { initialTerms, MedicalTerm, UserProgress, weekThemes } from './data/terms';
 
+import { unlockAudio } from './utils/audioUnlocker';
+
+// Initialize audio unlocker for mobile
+unlockAudio();
+
 export default function App() {
   const [terms, setTerms] = useState<MedicalTerm[]>(initialTerms);
   const [currentIndex, setCurrentIndex] = useState(0);

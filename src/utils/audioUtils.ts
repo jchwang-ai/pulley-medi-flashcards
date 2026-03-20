@@ -46,8 +46,16 @@ export function pcmToWav(base64Pcm: string, sampleRate: number = 24000): string 
   const pcmView = new Uint8Array(buffer, 44);
   pcmView.set(bytes);
 
-  const blob = new Blob([buffer], { type: 'audio/wav' });
-  return URL.createObjectURL(blob);
+  // Convert buffer to base64 in chunks to avoid stack overflow
+  const uint8 = new Uint8Array(buffer);
+  let binary = '';
+  const chunkSize = 8192;
+  for (let i = 0; i < uint8.length; i += chunkSize) {
+    binary += String.fromCharCode.apply(null, uint8.subarray(i, i + chunkSize) as any);
+  }
+  const base64Wav = btoa(binary);
+  
+  return `data:audio/wav;base64,${base64Wav}`;
 }
 
 function writeString(view: DataView, offset: number, string: string) {
